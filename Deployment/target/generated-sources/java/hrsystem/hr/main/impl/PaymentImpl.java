@@ -34,15 +34,17 @@ public class PaymentImpl extends ModelInstance<Payment,Hr> implements Payment {
         m_Name = "";
         m_Amount = 0d;
         m_Date = 0;
+        ref_National_ID = 0;
         R3_Employee_inst = EmployeeImpl.EMPTY_EMPLOYEE;
     }
 
-    private PaymentImpl( Hr context, UniqueId instanceId, String m_Name, double m_Amount, int m_Date ) {
+    private PaymentImpl( Hr context, UniqueId instanceId, String m_Name, double m_Amount, int m_Date, int ref_National_ID ) {
         super(instanceId);
         this.context = context;
         this.m_Name = m_Name;
         this.m_Amount = m_Amount;
         this.m_Date = m_Date;
+        this.ref_National_ID = ref_National_ID;
         R3_Employee_inst = EmployeeImpl.EMPTY_EMPLOYEE;
     }
 
@@ -55,8 +57,8 @@ public class PaymentImpl extends ModelInstance<Payment,Hr> implements Payment {
         else throw new InstancePopulationException( "Instance already exists within this population." );
     }
 
-    public static Payment create( Hr context, UniqueId instanceId, String m_Name, double m_Amount, int m_Date ) throws XtumlException {
-        Payment newPayment = new PaymentImpl( context, instanceId, m_Name, m_Amount, m_Date );
+    public static Payment create( Hr context, UniqueId instanceId, String m_Name, double m_Amount, int m_Date, int ref_National_ID ) throws XtumlException {
+        Payment newPayment = new PaymentImpl( context, instanceId, m_Name, m_Amount, m_Date, ref_National_ID );
         if ( context.addInstance( newPayment ) ) {
             return newPayment;
         }
@@ -83,11 +85,6 @@ public class PaymentImpl extends ModelInstance<Payment,Hr> implements Payment {
     }
     private double m_Amount;
     @Override
-    public double getAmount() throws XtumlException {
-        checkLiving();
-        return m_Amount;
-    }
-    @Override
     public void setAmount(double m_Amount) throws XtumlException {
         checkLiving();
         if (m_Amount != this.m_Amount) {
@@ -96,7 +93,17 @@ public class PaymentImpl extends ModelInstance<Payment,Hr> implements Payment {
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Amount", oldValue, this.m_Amount));
         }
     }
+    @Override
+    public double getAmount() throws XtumlException {
+        checkLiving();
+        return m_Amount;
+    }
     private int m_Date;
+    @Override
+    public int getDate() throws XtumlException {
+        checkLiving();
+        return m_Date;
+    }
     @Override
     public void setDate(int m_Date) throws XtumlException {
         checkLiving();
@@ -106,10 +113,20 @@ public class PaymentImpl extends ModelInstance<Payment,Hr> implements Payment {
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Date", oldValue, this.m_Date));
         }
     }
+    private int ref_National_ID;
     @Override
-    public int getDate() throws XtumlException {
+    public void setNational_ID(int ref_National_ID) throws XtumlException {
         checkLiving();
-        return m_Date;
+        if (ref_National_ID != this.ref_National_ID) {
+            final int oldValue = this.ref_National_ID;
+            this.ref_National_ID = ref_National_ID;
+            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "ref_National_ID", oldValue, this.ref_National_ID));
+        }
+    }
+    @Override
+    public int getNational_ID() throws XtumlException {
+        checkLiving();
+        return ref_National_ID;
     }
 
 
@@ -174,16 +191,22 @@ class EmptyPayment extends ModelInstance<Payment,Hr> implements Payment {
     public void setName( String m_Name ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
+    public void setAmount( double m_Amount ) throws XtumlException {
+        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
+    }
     public double getAmount() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
-    public void setAmount( double m_Amount ) throws XtumlException {
-        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
+    public int getDate() throws XtumlException {
+        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
     public void setDate( int m_Date ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
-    public int getDate() throws XtumlException {
+    public void setNational_ID( int ref_National_ID ) throws XtumlException {
+        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
+    }
+    public int getNational_ID() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
 

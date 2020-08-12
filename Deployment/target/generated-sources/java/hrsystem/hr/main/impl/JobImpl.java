@@ -41,17 +41,21 @@ public class JobImpl extends ModelInstance<Job,Hr> implements Job {
         m_Job_ID = 0;
         m_Amount = 0d;
         m_Name = "";
+        ref_GValue = 0;
+        ref_SValue = 0;
         R1_Employee_Job_set = new Employee_JobSetImpl();
         R5_Grade_inst = GradeImpl.EMPTY_GRADE;
         R5_Step_inst = StepImpl.EMPTY_STEP;
     }
 
-    private JobImpl( Hr context, UniqueId instanceId, int m_Job_ID, double m_Amount, String m_Name ) {
+    private JobImpl( Hr context, UniqueId instanceId, int m_Job_ID, double m_Amount, String m_Name, int ref_GValue, int ref_SValue ) {
         super(instanceId);
         this.context = context;
         this.m_Job_ID = m_Job_ID;
         this.m_Amount = m_Amount;
         this.m_Name = m_Name;
+        this.ref_GValue = ref_GValue;
+        this.ref_SValue = ref_SValue;
         R1_Employee_Job_set = new Employee_JobSetImpl();
         R5_Grade_inst = GradeImpl.EMPTY_GRADE;
         R5_Step_inst = StepImpl.EMPTY_STEP;
@@ -66,8 +70,8 @@ public class JobImpl extends ModelInstance<Job,Hr> implements Job {
         else throw new InstancePopulationException( "Instance already exists within this population." );
     }
 
-    public static Job create( Hr context, UniqueId instanceId, int m_Job_ID, double m_Amount, String m_Name ) throws XtumlException {
-        Job newJob = new JobImpl( context, instanceId, m_Job_ID, m_Amount, m_Name );
+    public static Job create( Hr context, UniqueId instanceId, int m_Job_ID, double m_Amount, String m_Name, int ref_GValue, int ref_SValue ) throws XtumlException {
+        Job newJob = new JobImpl( context, instanceId, m_Job_ID, m_Amount, m_Name, ref_GValue, ref_SValue );
         if ( context.addInstance( newJob ) ) {
             return newJob;
         }
@@ -79,18 +83,19 @@ public class JobImpl extends ModelInstance<Job,Hr> implements Job {
     // attributes
     private int m_Job_ID;
     @Override
-    public int getJob_ID() throws XtumlException {
-        checkLiving();
-        return m_Job_ID;
-    }
-    @Override
     public void setJob_ID(int m_Job_ID) throws XtumlException {
         checkLiving();
         if (m_Job_ID != this.m_Job_ID) {
             final int oldValue = this.m_Job_ID;
             this.m_Job_ID = m_Job_ID;
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Job_ID", oldValue, this.m_Job_ID));
+            if ( !R1_Employee_Job().isEmpty() ) R1_Employee_Job().setJob_ID( m_Job_ID );
         }
+    }
+    @Override
+    public int getJob_ID() throws XtumlException {
+        checkLiving();
+        return m_Job_ID;
     }
     private double m_Amount;
     @Override
@@ -109,6 +114,11 @@ public class JobImpl extends ModelInstance<Job,Hr> implements Job {
     }
     private String m_Name;
     @Override
+    public String getName() throws XtumlException {
+        checkLiving();
+        return m_Name;
+    }
+    @Override
     public void setName(String m_Name) throws XtumlException {
         checkLiving();
         if (StringUtil.inequality(m_Name, this.m_Name)) {
@@ -117,10 +127,35 @@ public class JobImpl extends ModelInstance<Job,Hr> implements Job {
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Name", oldValue, this.m_Name));
         }
     }
+    private int ref_GValue;
     @Override
-    public String getName() throws XtumlException {
+    public void setGValue(int ref_GValue) throws XtumlException {
         checkLiving();
-        return m_Name;
+        if (ref_GValue != this.ref_GValue) {
+            final int oldValue = this.ref_GValue;
+            this.ref_GValue = ref_GValue;
+            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "ref_GValue", oldValue, this.ref_GValue));
+        }
+    }
+    @Override
+    public int getGValue() throws XtumlException {
+        checkLiving();
+        return ref_GValue;
+    }
+    private int ref_SValue;
+    @Override
+    public int getSValue() throws XtumlException {
+        checkLiving();
+        return ref_SValue;
+    }
+    @Override
+    public void setSValue(int ref_SValue) throws XtumlException {
+        checkLiving();
+        if (ref_SValue != this.ref_SValue) {
+            final int oldValue = this.ref_SValue;
+            this.ref_SValue = ref_SValue;
+            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "ref_SValue", oldValue, this.ref_SValue));
+        }
     }
 
 
@@ -129,6 +164,17 @@ public class JobImpl extends ModelInstance<Job,Hr> implements Job {
     public IInstanceIdentifier getId1() {
         try {
             return new InstanceIdentifier(getJob_ID());
+        }
+        catch ( XtumlException e ) {
+            getRunContext().getLog().error(e);
+            System.exit(1);
+            return null;
+        }
+    }
+    @Override
+    public IInstanceIdentifier getId2() {
+        try {
+            return new InstanceIdentifier(getGValue(), getSValue());
         }
         catch ( XtumlException e ) {
             getRunContext().getLog().error(e);
@@ -257,11 +303,11 @@ public class JobImpl extends ModelInstance<Job,Hr> implements Job {
 class EmptyJob extends ModelInstance<Job,Hr> implements Job {
 
     // attributes
-    public int getJob_ID() throws XtumlException {
-        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
-    }
     public void setJob_ID( int m_Job_ID ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
+    }
+    public int getJob_ID() throws XtumlException {
+        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
     public void setAmount( double m_Amount ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
@@ -269,11 +315,23 @@ class EmptyJob extends ModelInstance<Job,Hr> implements Job {
     public double getAmount() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
+    public String getName() throws XtumlException {
+        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
+    }
     public void setName( String m_Name ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
-    public String getName() throws XtumlException {
+    public void setGValue( int ref_GValue ) throws XtumlException {
+        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
+    }
+    public int getGValue() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
+    }
+    public int getSValue() throws XtumlException {
+        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
+    }
+    public void setSValue( int ref_SValue ) throws XtumlException {
+        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
 
 

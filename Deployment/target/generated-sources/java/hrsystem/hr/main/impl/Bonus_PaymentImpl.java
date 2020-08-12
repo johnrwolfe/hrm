@@ -40,21 +40,21 @@ public class Bonus_PaymentImpl extends ModelInstance<Bonus_Payment,Hr> implement
         m_Starting = 0;
         m_Ending = 0;
         m_Amount = 0d;
-        m_Name = "";
-        m_ID = 0;
+        ref_National_ID = 0;
+        ref_Name = 0;
         R4_Bonus_inst = BonusImpl.EMPTY_BONUS;
         R4_Employee_inst = EmployeeImpl.EMPTY_EMPLOYEE;
         statemachine = new Bonus_PaymentStateMachine(this, context());
     }
 
-    private Bonus_PaymentImpl( Hr context, UniqueId instanceId, int m_Starting, int m_Ending, double m_Amount, String m_Name, int m_ID, int initialState ) {
+    private Bonus_PaymentImpl( Hr context, UniqueId instanceId, int m_Starting, int m_Ending, double m_Amount, int ref_National_ID, int ref_Name, int initialState ) {
         super(instanceId);
         this.context = context;
         this.m_Starting = m_Starting;
         this.m_Ending = m_Ending;
         this.m_Amount = m_Amount;
-        this.m_Name = m_Name;
-        this.m_ID = m_ID;
+        this.ref_National_ID = ref_National_ID;
+        this.ref_Name = ref_Name;
         R4_Bonus_inst = BonusImpl.EMPTY_BONUS;
         R4_Employee_inst = EmployeeImpl.EMPTY_EMPLOYEE;
         statemachine = new Bonus_PaymentStateMachine(this, context(), initialState);
@@ -69,8 +69,8 @@ public class Bonus_PaymentImpl extends ModelInstance<Bonus_Payment,Hr> implement
         else throw new InstancePopulationException( "Instance already exists within this population." );
     }
 
-    public static Bonus_Payment create( Hr context, UniqueId instanceId, int m_Starting, int m_Ending, double m_Amount, String m_Name, int m_ID, int initialState ) throws XtumlException {
-        Bonus_Payment newBonus_Payment = new Bonus_PaymentImpl( context, instanceId, m_Starting, m_Ending, m_Amount, m_Name, m_ID, initialState );
+    public static Bonus_Payment create( Hr context, UniqueId instanceId, int m_Starting, int m_Ending, double m_Amount, int ref_National_ID, int ref_Name, int initialState ) throws XtumlException {
+        Bonus_Payment newBonus_Payment = new Bonus_PaymentImpl( context, instanceId, m_Starting, m_Ending, m_Amount, ref_National_ID, ref_Name, initialState );
         if ( context.addInstance( newBonus_Payment ) ) {
             return newBonus_Payment;
         }
@@ -136,39 +136,50 @@ public class Bonus_PaymentImpl extends ModelInstance<Bonus_Payment,Hr> implement
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Amount", oldValue, this.m_Amount));
         }
     }
-    private String m_Name;
+    private int ref_National_ID;
     @Override
-    public String getName() throws XtumlException {
+    public void setNational_ID(int ref_National_ID) throws XtumlException {
         checkLiving();
-        return m_Name;
-    }
-    @Override
-    public void setName(String m_Name) throws XtumlException {
-        checkLiving();
-        if (StringUtil.inequality(m_Name, this.m_Name)) {
-            final String oldValue = this.m_Name;
-            this.m_Name = m_Name;
-            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Name", oldValue, this.m_Name));
-        }
-    }
-    private int m_ID;
-    @Override
-    public void setID(int m_ID) throws XtumlException {
-        checkLiving();
-        if (m_ID != this.m_ID) {
-            final int oldValue = this.m_ID;
-            this.m_ID = m_ID;
-            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_ID", oldValue, this.m_ID));
+        if (ref_National_ID != this.ref_National_ID) {
+            final int oldValue = this.ref_National_ID;
+            this.ref_National_ID = ref_National_ID;
+            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "ref_National_ID", oldValue, this.ref_National_ID));
         }
     }
     @Override
-    public int getID() throws XtumlException {
+    public int getNational_ID() throws XtumlException {
         checkLiving();
-        return m_ID;
+        return ref_National_ID;
+    }
+    private int ref_Name;
+    @Override
+    public int getName() throws XtumlException {
+        checkLiving();
+        return ref_Name;
+    }
+    @Override
+    public void setName(int ref_Name) throws XtumlException {
+        checkLiving();
+        if (ref_Name != this.ref_Name) {
+            final int oldValue = this.ref_Name;
+            this.ref_Name = ref_Name;
+            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "ref_Name", oldValue, this.ref_Name));
+        }
     }
 
 
     // instance identifiers
+    @Override
+    public IInstanceIdentifier getId1() {
+        try {
+            return new InstanceIdentifier(getNational_ID(), getName());
+        }
+        catch ( XtumlException e ) {
+            getRunContext().getLog().error(e);
+            System.exit(1);
+            return null;
+        }
+    }
 
     // operations
 
@@ -183,14 +194,12 @@ public class Bonus_PaymentImpl extends ModelInstance<Bonus_Payment,Hr> implement
         public void crud( final int p_National_ID,  final String p_Name,  final int p_Starting,  final int p_Ending,  final String p_Action ) throws XtumlException {
             Employee employee = context().Employee_instances().anyWhere(selected -> ((Employee)selected).getNational_ID() == p_National_ID);
             Bonus bonus = context().Bonus_instances().anyWhere(selected -> StringUtil.equality(((Bonus)selected).getName(), p_Name));
-            Bonus_Payment bp = context().Bonus_Payment_instances().anyWhere(selected -> StringUtil.equality(((Bonus_Payment)selected).getName(), p_Name) && ((Bonus_Payment)selected).getID() == p_National_ID);
+            Bonus_Payment bp = context().Bonus_Payment_instances().anyWhere(selected -> StringUtil.equality(((Bonus_Payment)selected).getName(), p_Name) && ((Bonus_Payment)selected).getNational_ID() == p_National_ID);
             if ( bp.isEmpty() && StringUtil.equality(p_Action, "NEW") ) {
                 context().LOG().LogInfo( "Attempting to add a new bonus to employee." );
                 Bonus_Payment b = Bonus_PaymentImpl.create( context() );
                 context().relate_R4_Bonus_Payment_Employee( b, employee );
                 context().relate_R4_Bonus_Payment_Bonus( b, bonus );
-                b.setID(p_National_ID);
-                b.setName(p_Name);
                 b.setStarting(p_Starting);
                 b.setEnding(p_Ending);
                 context().UI().Reply( "bonus created successfully.", true );
@@ -336,17 +345,17 @@ class EmptyBonus_Payment extends ModelInstance<Bonus_Payment,Hr> implements Bonu
     public void setAmount( double m_Amount ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
-    public String getName() throws XtumlException {
-        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
-    }
-    public void setName( String m_Name ) throws XtumlException {
+    public void setNational_ID( int ref_National_ID ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
-    public void setID( int m_ID ) throws XtumlException {
-        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
-    }
-    public int getID() throws XtumlException {
+    public int getNational_ID() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
+    }
+    public int getName() throws XtumlException {
+        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
+    }
+    public void setName( int ref_Name ) throws XtumlException {
+        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
 
 

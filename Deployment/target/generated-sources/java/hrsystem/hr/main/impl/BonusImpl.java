@@ -69,25 +69,21 @@ public class BonusImpl extends ModelInstance<Bonus,Hr> implements Bonus {
     // attributes
     private String m_Name;
     @Override
-    public String getName() throws XtumlException {
-        checkLiving();
-        return m_Name;
-    }
-    @Override
     public void setName(String m_Name) throws XtumlException {
         checkLiving();
         if (StringUtil.inequality(m_Name, this.m_Name)) {
             final String oldValue = this.m_Name;
             this.m_Name = m_Name;
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Name", oldValue, this.m_Name));
+            if ( !R4_Bonus_Payment().isEmpty() ) R4_Bonus_Payment().setName( m_Name );
         }
     }
-    private double m_Percent;
     @Override
-    public double getPercent() throws XtumlException {
+    public String getName() throws XtumlException {
         checkLiving();
-        return m_Percent;
+        return m_Name;
     }
+    private double m_Percent;
     @Override
     public void setPercent(double m_Percent) throws XtumlException {
         checkLiving();
@@ -96,6 +92,11 @@ public class BonusImpl extends ModelInstance<Bonus,Hr> implements Bonus {
             this.m_Percent = m_Percent;
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Percent", oldValue, this.m_Percent));
         }
+    }
+    @Override
+    public double getPercent() throws XtumlException {
+        checkLiving();
+        return m_Percent;
     }
 
 
@@ -134,7 +135,7 @@ public class BonusImpl extends ModelInstance<Bonus,Hr> implements Bonus {
             else if ( !bonus.isEmpty() && StringUtil.equality(p_Action, "NEW") ) {
                 context().LOG().LogInfo( "Attempting to add a new bonus." );
                 context().LOG().LogInfo( "bonus already exists." );
-                context().UI().Reply( "bonus already exists", false );
+                context().UI().Reply( "Bonus already exists", false );
             }
             else if ( !bonus.isEmpty() && StringUtil.equality(p_Action, "UPDATE") ) {
                 context().LOG().LogInfo( "Attempting to update bonus." );
@@ -210,17 +211,17 @@ public class BonusImpl extends ModelInstance<Bonus,Hr> implements Bonus {
 class EmptyBonus extends ModelInstance<Bonus,Hr> implements Bonus {
 
     // attributes
-    public String getName() throws XtumlException {
-        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
-    }
     public void setName( String m_Name ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
-    public double getPercent() throws XtumlException {
+    public String getName() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
     public void setPercent( double m_Percent ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
+    }
+    public double getPercent() throws XtumlException {
+        throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
 
 

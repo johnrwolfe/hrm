@@ -1,7 +1,9 @@
 package deployment;
 
 
+import hrsystem.Auth;
 import hrsystem.Hr;
+import hrsystem.HrSqlLoader;
 import hrsystem.UI;
 
 import io.ciera.runtime.summit.application.ApplicationExecutor;
@@ -21,7 +23,7 @@ public class DeploymentApplication implements IApplication {
     private ApplicationExecutor[] executors;
 
     public DeploymentApplication() {
-        components = new IComponent<?>[2];
+        components = new IComponent<?>[3];
         executors = new ApplicationExecutor[1];
     }
 
@@ -42,19 +44,26 @@ public class DeploymentApplication implements IApplication {
                 executors[i] = new ApplicationExecutor( "DeploymentApplicationExecutor" + i, args );
             }
         }
-        components[0] = new UI(this, executors[0], 0);
-        components[1] = new Hr(this, executors[0], 1);
-        ((UI)components[0]).App().satisfy(((Hr)components[1]).UI());
-        ((Hr)components[1]).UI().satisfy(((UI)components[0]).App());
-        ((UI)components[0]).AppOps().satisfy(((Hr)components[1]).UI_Ops());
-        ((Hr)components[1]).UI_Ops().satisfy(((UI)components[0]).AppOps());
+        components[1] = new UI(this, executors[0], 1);
+        components[2] = new Hr(this, executors[0], 2);
+        components[2].addLoader("Sql", new HrSqlLoader((Hr)components[2]));
+        components[0] = new Auth(this, executors[0], 0);
+        ((UI)components[1]).App().satisfy(((Hr)components[2]).UI());
+        ((Hr)components[2]).UI().satisfy(((UI)components[1]).App());
+        ((UI)components[1]).AppOps().satisfy(((Hr)components[2]).UI_Ops());
+        ((Hr)components[2]).UI_Ops().satisfy(((UI)components[1]).AppOps());
+        ((Hr)components[2]).HAuth().satisfy(((Auth)components[0]).Auth());
+        ((Auth)components[0]).Auth().satisfy(((Hr)components[2]).HAuth());
     }
 
     public UI UI() {
-        return (UI)components[0];
+        return (UI)components[1];
     }
     public Hr Hr() {
-        return (Hr)components[1];
+        return (Hr)components[2];
+    }
+    public Auth Auth() {
+        return (Auth)components[0];
     }
 
     @Override

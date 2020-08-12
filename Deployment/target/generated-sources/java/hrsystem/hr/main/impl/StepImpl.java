@@ -78,11 +78,23 @@ public class StepImpl extends ModelInstance<Step,Hr> implements Step {
             final int oldValue = this.m_SValue;
             this.m_SValue = m_SValue;
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_SValue", oldValue, this.m_SValue));
+            if ( !R5_Job().isEmpty() ) R5_Job().setSValue( m_SValue );
         }
     }
 
 
     // instance identifiers
+    @Override
+    public IInstanceIdentifier getId1() {
+        try {
+            return new InstanceIdentifier(getSValue());
+        }
+        catch ( XtumlException e ) {
+            getRunContext().getLog().error(e);
+            System.exit(1);
+            return null;
+        }
+    }
 
     // operations
 

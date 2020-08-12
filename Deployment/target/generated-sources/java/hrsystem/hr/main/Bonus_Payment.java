@@ -18,10 +18,10 @@ public interface Bonus_Payment extends IModelInstance<Bonus_Payment,Hr> {
     public int getEnding() throws XtumlException;
     public double getAmount() throws XtumlException;
     public void setAmount( double m_Amount ) throws XtumlException;
-    public String getName() throws XtumlException;
-    public void setName( String m_Name ) throws XtumlException;
-    public void setID( int m_ID ) throws XtumlException;
-    public int getID() throws XtumlException;
+    public void setNational_ID( int ref_National_ID ) throws XtumlException;
+    public int getNational_ID() throws XtumlException;
+    public int getName() throws XtumlException;
+    public void setName( int ref_Name ) throws XtumlException;
 
 
     // operations

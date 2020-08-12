@@ -40,19 +40,19 @@ public class Employee_JobImpl extends ModelInstance<Employee_Job,Hr> implements 
         this.context = context;
         m_Appointment_Date = 0;
         m_Active = false;
-        m_Job_ID = 0;
-        m_National_ID = 0;
+        ref_Job_ID = 0;
+        ref_National_ID = 0;
         R1_Employee_inst = EmployeeImpl.EMPTY_EMPLOYEE;
         R1_Job_inst = JobImpl.EMPTY_JOB;
     }
 
-    private Employee_JobImpl( Hr context, UniqueId instanceId, int m_Appointment_Date, boolean m_Active, int m_Job_ID, int m_National_ID ) {
+    private Employee_JobImpl( Hr context, UniqueId instanceId, int m_Appointment_Date, boolean m_Active, int ref_Job_ID, int ref_National_ID ) {
         super(instanceId);
         this.context = context;
         this.m_Appointment_Date = m_Appointment_Date;
         this.m_Active = m_Active;
-        this.m_Job_ID = m_Job_ID;
-        this.m_National_ID = m_National_ID;
+        this.ref_Job_ID = ref_Job_ID;
+        this.ref_National_ID = ref_National_ID;
         R1_Employee_inst = EmployeeImpl.EMPTY_EMPLOYEE;
         R1_Job_inst = JobImpl.EMPTY_JOB;
     }
@@ -66,8 +66,8 @@ public class Employee_JobImpl extends ModelInstance<Employee_Job,Hr> implements 
         else throw new InstancePopulationException( "Instance already exists within this population." );
     }
 
-    public static Employee_Job create( Hr context, UniqueId instanceId, int m_Appointment_Date, boolean m_Active, int m_Job_ID, int m_National_ID ) throws XtumlException {
-        Employee_Job newEmployee_Job = new Employee_JobImpl( context, instanceId, m_Appointment_Date, m_Active, m_Job_ID, m_National_ID );
+    public static Employee_Job create( Hr context, UniqueId instanceId, int m_Appointment_Date, boolean m_Active, int ref_Job_ID, int ref_National_ID ) throws XtumlException {
+        Employee_Job newEmployee_Job = new Employee_JobImpl( context, instanceId, m_Appointment_Date, m_Active, ref_Job_ID, ref_National_ID );
         if ( context.addInstance( newEmployee_Job ) ) {
             return newEmployee_Job;
         }
@@ -94,6 +94,11 @@ public class Employee_JobImpl extends ModelInstance<Employee_Job,Hr> implements 
     }
     private boolean m_Active;
     @Override
+    public boolean getActive() throws XtumlException {
+        checkLiving();
+        return m_Active;
+    }
+    @Override
     public void setActive(boolean m_Active) throws XtumlException {
         checkLiving();
         if (m_Active != this.m_Active) {
@@ -102,44 +107,50 @@ public class Employee_JobImpl extends ModelInstance<Employee_Job,Hr> implements 
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Active", oldValue, this.m_Active));
         }
     }
+    private int ref_Job_ID;
     @Override
-    public boolean getActive() throws XtumlException {
+    public void setJob_ID(int ref_Job_ID) throws XtumlException {
         checkLiving();
-        return m_Active;
-    }
-    private int m_Job_ID;
-    @Override
-    public void setJob_ID(int m_Job_ID) throws XtumlException {
-        checkLiving();
-        if (m_Job_ID != this.m_Job_ID) {
-            final int oldValue = this.m_Job_ID;
-            this.m_Job_ID = m_Job_ID;
-            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_Job_ID", oldValue, this.m_Job_ID));
+        if (ref_Job_ID != this.ref_Job_ID) {
+            final int oldValue = this.ref_Job_ID;
+            this.ref_Job_ID = ref_Job_ID;
+            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "ref_Job_ID", oldValue, this.ref_Job_ID));
         }
     }
     @Override
     public int getJob_ID() throws XtumlException {
         checkLiving();
-        return m_Job_ID;
+        return ref_Job_ID;
     }
-    private int m_National_ID;
-    @Override
-    public void setNational_ID(int m_National_ID) throws XtumlException {
-        checkLiving();
-        if (m_National_ID != this.m_National_ID) {
-            final int oldValue = this.m_National_ID;
-            this.m_National_ID = m_National_ID;
-            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_National_ID", oldValue, this.m_National_ID));
-        }
-    }
+    private int ref_National_ID;
     @Override
     public int getNational_ID() throws XtumlException {
         checkLiving();
-        return m_National_ID;
+        return ref_National_ID;
+    }
+    @Override
+    public void setNational_ID(int ref_National_ID) throws XtumlException {
+        checkLiving();
+        if (ref_National_ID != this.ref_National_ID) {
+            final int oldValue = this.ref_National_ID;
+            this.ref_National_ID = ref_National_ID;
+            getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "ref_National_ID", oldValue, this.ref_National_ID));
+        }
     }
 
 
     // instance identifiers
+    @Override
+    public IInstanceIdentifier getId1() {
+        try {
+            return new InstanceIdentifier(getJob_ID(), getNational_ID());
+        }
+        catch ( XtumlException e ) {
+            getRunContext().getLog().error(e);
+            System.exit(1);
+            return null;
+        }
+    }
 
     // operations
 
@@ -162,8 +173,6 @@ public class Employee_JobImpl extends ModelInstance<Employee_Job,Hr> implements 
                 context().relate_R1_Employee_Job_Job( employeePosition, job );
                 employeePosition.setActive(true);
                 employeePosition.setAppointment_Date(context().TIM().current_seconds());
-                employeePosition.setJob_ID(p_Job_ID);
-                employeePosition.setNational_ID(p_National_ID);
                 context().UI().Reply( "job/position created successfully.", true );
             }
             else if ( !ej.isEmpty() && StringUtil.equality(p_Action, "NEW") ) {
@@ -173,8 +182,6 @@ public class Employee_JobImpl extends ModelInstance<Employee_Job,Hr> implements 
                 context().relate_R1_Employee_Job_Job( employeePosition, job );
                 employeePosition.setActive(false);
                 employeePosition.setAppointment_Date(context().TIM().current_seconds());
-                employeePosition.setJob_ID(p_Job_ID);
-                employeePosition.setNational_ID(p_National_ID);
                 context().LOG().LogInfo( "Job/position assigned but inactive." );
                 context().UI().Reply( "Job/position assigned but inactive", true );
             }
@@ -269,23 +276,23 @@ class EmptyEmployee_Job extends ModelInstance<Employee_Job,Hr> implements Employ
     public int getAppointment_Date() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
-    public void setActive( boolean m_Active ) throws XtumlException {
-        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
-    }
     public boolean getActive() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
-    public void setJob_ID( int m_Job_ID ) throws XtumlException {
+    public void setActive( boolean m_Active ) throws XtumlException {
+        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
+    }
+    public void setJob_ID( int ref_Job_ID ) throws XtumlException {
         throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
     public int getJob_ID() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
     }
-    public void setNational_ID( int m_National_ID ) throws XtumlException {
-        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
-    }
     public int getNational_ID() throws XtumlException {
         throw new EmptyInstanceException( "Cannot get attribute of empty instance." );
+    }
+    public void setNational_ID( int ref_National_ID ) throws XtumlException {
+        throw new EmptyInstanceException( "Cannot set attribute of empty instance." );
     }
 
 

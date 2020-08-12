@@ -1,6 +1,7 @@
 package hrsystem;
 
 
+import hrsystem.hr.HrHAuth;
 import hrsystem.hr.HrUI;
 import hrsystem.hr.HrUI_Ops;
 import hrsystem.hr.main.Bonus;
@@ -91,8 +92,8 @@ public class Hr extends Component<Hr> {
         R4_Bonus_Payment_Employee_extent = new RelationshipSet();
         R5_Job_Grade_extent = new RelationshipSet();
         R5_Job_Step_extent = new RelationshipSet();
-        TIM = null;
         LOG = null;
+        TIM = null;
         classDirectory = new TreeMap<>();
         classDirectory.put("Bonus", BonusImpl.class);
         classDirectory.put("BP", Bonus_PaymentImpl.class);
@@ -142,6 +143,7 @@ public class Hr extends Component<Hr> {
         if ( R1_Employee_Job_Employee_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR1_Employee_Job(form);
             form.setR1_Employee(part);
+            form.setNational_ID( part.getNational_ID() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -162,6 +164,7 @@ public class Hr extends Component<Hr> {
         if ( R1_Employee_Job_Job_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR1_Employee_Job(form);
             form.setR1_Job(part);
+            form.setJob_ID( part.getJob_ID() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -182,6 +185,7 @@ public class Hr extends Component<Hr> {
         if ( R2_Employee_Leave_Employee_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR2_Employee_Leave(form);
             form.setR2_Employee(part);
+            form.setNational_ID( part.getNational_ID() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -202,6 +206,7 @@ public class Hr extends Component<Hr> {
         if ( R2_Employee_Leave_Leave_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR2_Employee_Leave(form);
             form.setR2_Leave(part);
+            form.setLeave_ID( part.getLeave_ID() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -222,6 +227,7 @@ public class Hr extends Component<Hr> {
         if ( R3_Payment_Employee_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR3_Payment(form);
             form.setR3_Employee(part);
+            form.setNational_ID( part.getNational_ID() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -242,6 +248,7 @@ public class Hr extends Component<Hr> {
         if ( R4_Bonus_Payment_Bonus_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR4_Bonus_Payment(form);
             form.setR4_Bonus(part);
+            form.setName( part.getName() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -262,6 +269,7 @@ public class Hr extends Component<Hr> {
         if ( R4_Bonus_Payment_Employee_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR4_Bonus_Payment(form);
             form.setR4_Employee(part);
+            form.setNational_ID( part.getNational_ID() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -282,6 +290,7 @@ public class Hr extends Component<Hr> {
         if ( R5_Job_Grade_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR5_Job(form);
             form.setR5_Grade(part);
+            form.setGValue( part.getGValue() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -302,6 +311,7 @@ public class Hr extends Component<Hr> {
         if ( R5_Job_Step_extent.add( new Relationship( form.getInstanceId(), part.getInstanceId() ) ) ) {
             part.addR5_Job(form);
             form.setR5_Step(part);
+            form.setSValue( part.getSValue() );
         }
         else throw new ModelIntegrityException( "Instances could not be related." );
     }
@@ -400,6 +410,11 @@ public class Hr extends Component<Hr> {
 
 
     // ports
+    private HrHAuth HrHAuth;
+    public HrHAuth HAuth() {
+        if ( null == HrHAuth ) HrHAuth = new HrHAuth( this, null );
+        return HrHAuth;
+    }
     private HrUI HrUI;
     public HrUI UI() {
         if ( null == HrUI ) HrUI = new HrUI( this, null );
@@ -413,15 +428,15 @@ public class Hr extends Component<Hr> {
 
 
     // utilities
-    private TIM TIM;
-    public TIM TIM() {
-        if ( null == TIM ) TIM = new TIMImpl<>( this );
-        return TIM;
-    }
     private LOG LOG;
     public LOG LOG() {
         if ( null == LOG ) LOG = new LOGImpl<>( this );
         return LOG;
+    }
+    private TIM TIM;
+    public TIM TIM() {
+        if ( null == TIM ) TIM = new TIMImpl<>( this );
+        return TIM;
     }
 
 

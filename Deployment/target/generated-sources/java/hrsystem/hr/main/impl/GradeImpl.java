@@ -78,11 +78,23 @@ public class GradeImpl extends ModelInstance<Grade,Hr> implements Grade {
             final int oldValue = this.m_GValue;
             this.m_GValue = m_GValue;
             getRunContext().addChange(new AttributeChangedDelta(this, KEY_LETTERS, "m_GValue", oldValue, this.m_GValue));
+            if ( !R5_Job().isEmpty() ) R5_Job().setGValue( m_GValue );
         }
     }
 
 
     // instance identifiers
+    @Override
+    public IInstanceIdentifier getId1() {
+        try {
+            return new InstanceIdentifier(getGValue());
+        }
+        catch ( XtumlException e ) {
+            getRunContext().getLog().error(e);
+            System.exit(1);
+            return null;
+        }
+    }
 
     // operations
 

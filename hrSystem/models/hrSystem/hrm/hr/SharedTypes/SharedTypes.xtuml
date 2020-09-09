@@ -1,0 +1,68 @@
+-- BP 7.1.6 content: Package syschar: 3 persistence-version: 7.1.6
+
+INSERT INTO EP_PKG
+	VALUES ("a67e6cd5-2b7e-444e-afec-38be111bd3b9",
+	"00000000-0000-0000-0000-000000000000",
+	"5e81f22e-afc2-4550-9652-9c4782c6f41e",
+	'SharedTypes',
+	'',
+	0);
+INSERT INTO GD_MD
+	VALUES ("6c4b2a61-d27e-4f50-aba0-060533da24f4",
+	112,
+	"a67e6cd5-2b7e-444e-afec-38be111bd3b9",
+	108,
+	0,
+	0,
+	1,
+	1,
+	1,
+	12,
+	1,
+	0,
+	0,
+	0,
+	0,
+	0,
+	'',
+	'hrSystem::hrm::hr::SharedTypes');
+INSERT INTO DIM_DIA
+	VALUES ("6c4b2a61-d27e-4f50-aba0-060533da24f4",
+	'',
+	1.000000,
+	0.000000,
+	0.000000,
+	"00000000-0000-0000-0000-000000000000");
+INSERT INTO EP_PKGREF
+	VALUES ("a67e6cd5-2b7e-444e-afec-38be111bd3b9",
+	"ac88c2f0-4cf6-43e1-b037-5b7a1c38721b");
+INSERT INTO EP_PKG_PROXY
+	VALUES ("ac88c2f0-4cf6-43e1-b037-5b7a1c38721b",
+	"5e81f22e-afc2-4550-9652-9c4782c6f41e",
+	"5e81f22e-afc2-4550-9652-9c4782c6f41e",
+	'SharedTypes',
+	'',
+	0,
+	'../../../SharedTypes/SharedTypes.xtuml');
+INSERT INTO PE_PE
+	VALUES ("a67e6cd5-2b7e-444e-afec-38be111bd3b9",
+	1,
+	"00000000-0000-0000-0000-000000000000",
+	"d878f6d3-d406-4972-80d4-d43f75abcac8",
+	7);
+INSERT INTO C_C_PROXY
+	VALUES ("d878f6d3-d406-4972-80d4-d43f75abcac8",
+	"00000000-0000-0000-0000-000000000000",
+	"00000000-0000-0000-0000-000000000000",
+	'hr',
+	'',
+	0,
+	"00000000-0000-0000-0000-000000000000",
+	0,
+	'',
+	'../hr.xtuml');
+INSERT INTO S_SYS_PROXY
+	VALUES ("5e81f22e-afc2-4550-9652-9c4782c6f41e",
+	'hrSystem',
+	1,
+	'../../../hrSystem.xtuml');
